@@ -1,0 +1,48 @@
+version: '1'
+
+services:
+
+  postgres:
+    image: postgres:14.2-alpine
+    container_name: db_postgres
+
+    environment:
+      POSTGRES_PASSWORD: postgres_docker
+      POSTGRES_DB: airports_db    
+    ports: 
+    - 5432:5432
+
+    networks:
+      compose-bridge:
+        ipv4_address: 10.5.0.5
+  
+  rabbitMQ:
+    image: rabbitmq:3-management
+    container_name: rabbitMQ
+    restart: always
+
+    ports:
+      - 15672:15672
+      - 5672:5672
+    
+    networks:
+      compose-bridge:
+        ipv4_address: 10.5.0.10
+  
+  mensagem: 
+    image: app_image_mensagem
+    container_name: mensagem
+    restart: always
+    networks:
+      - compose-bridge
+    depends_on:
+      - postgres
+      - rabbitMQ
+
+networks:
+  compose-bridge:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1

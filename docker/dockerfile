@@ -1,0 +1,7 @@
+FROM python
+RUN apt-get update && apt-get install python3-pip -y && apt-get install python-dev -y
+WORKDIR /mensagem
+COPY config.py .env requirements.txt mensagem.py /mensagem/
+RUN pip install -r requirements.txt
+
+CMD [ "python","mensagem.py"]
